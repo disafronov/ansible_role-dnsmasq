@@ -1,0 +1,79 @@
+---
+
+- name: Create systemd system-preset directory
+  ansible.builtin.file:
+    path: "/etc/systemd/system-preset"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create systemd system-preset for dnsmasq
+  ansible.builtin.template:
+    src: dnsmasq.preset.j2
+    dest: "/etc/systemd/system-preset/10-dnsmasq.preset"
+    mode: '0644'
+    owner: root
+    group: root
+
+- name: Create override directory for dnsmasq systemd service
+  ansible.builtin.file:
+    path: "/etc/systemd/system/dnsmasq.service.d"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create override file for dnsmasq systemd service
+  ansible.builtin.template:
+    src: dnsmasq.systemd-resolved.override.j2
+    dest: "/etc/systemd/system/dnsmasq.service.d/systemd-resolved.conf"
+    mode: '0644'
+    owner: root
+    group: root
+  notify: (Re)start dnsmasq service
+
+- name: Create requirements override directory for systemd-resolved systemd service
+  ansible.builtin.file:
+    path: "/etc/systemd/system/systemd-resolved.service.requires"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: Create requirements override link on dnsmasq service for systemd-resolved systemd service
+  ansible.builtin.file:
+    src: "/lib/systemd/system/dnsmasq.service"
+    dest: "/etc/systemd/system/systemd-resolved.service.requires/dnsmasq.service"
+    mode: '0644'
+    owner: root
+    group: root
+    state: link
+  notify: (Re)start dnsmasq service
+
+- name: Install dnsmasq
+  ansible.builtin.package:
+    name: dnsmasq
+    state: present
+
+- name: Create main config for dnsmasq
+  ansible.builtin.template:
+    src: dnsmasq.conf.j2
+    dest: "/etc/dnsmasq.conf"
+    mode: '0644'
+    owner: root
+    group: root
+  notify: (Re)start dnsmasq service
+
+- name: Create custom config for dnsmasq
+  when:
+    - dnsmasq is defined
+    - dnsmasq != None
+    - dnsmasq | length > 0
+  ansible.builtin.template:
+    src: dnsmasq.conf.d.j2
+    dest: "/etc/dnsmasq.d/00-custom.conf"
+    mode: '0644'
+    owner: root
+    group: root
+  notify: (Re)start dnsmasq service
