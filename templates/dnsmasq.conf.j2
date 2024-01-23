@@ -1,0 +1,10 @@
+{{ ansible_managed | comment }}
+
+# (systemd-resolved) you can specify which interface _not_ to listen on
+except-interface=lo
+
+# Never forward plain names (without a dot or domain part)
+domain-needed
+
+# Never forward addresses in the non-routed address spaces.
+bogus-priv
