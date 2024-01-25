@@ -31,30 +31,13 @@
     mode: '0644'
     owner: root
     group: root
-  notify: (Re)start dnsmasq service
-
-- name: Create requirements override directory for systemd-resolved systemd service
-  ansible.builtin.file:
-    path: "/etc/systemd/system/systemd-resolved.service.requires"
-    state: directory
-    mode: '0755'
-    owner: root
-    group: root
-
-- name: Create requirements override link on dnsmasq service for systemd-resolved systemd service
-  ansible.builtin.file:
-    src: "/lib/systemd/system/dnsmasq.service"
-    dest: "/etc/systemd/system/systemd-resolved.service.requires/dnsmasq.service"
-    mode: '0644'
-    owner: root
-    group: root
-    state: link
-  notify: (Re)start dnsmasq service
+  notify: Enable dnsmasq service
 
 - name: Install dnsmasq
   ansible.builtin.package:
     name: dnsmasq
     state: present
+  notify: Enable dnsmasq service
 
 - name: Create main config for dnsmasq
   ansible.builtin.template:
@@ -63,7 +46,7 @@
     mode: '0644'
     owner: root
     group: root
-  notify: (Re)start dnsmasq service
+  notify: Enable dnsmasq service
 
 - name: Create custom config for dnsmasq
   when:
@@ -76,4 +59,4 @@
     mode: '0644'
     owner: root
     group: root
-  notify: (Re)start dnsmasq service
+  notify: Enable dnsmasq service

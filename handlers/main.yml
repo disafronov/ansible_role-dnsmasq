@@ -1,6 +1,14 @@
-- name: (Re)start dnsmasq service
+- name: Enable dnsmasq service
+  ansible.builtin.systemd:
+    enabled: true
+    daemon_reload: true
+    # force: true
+    name: "dnsmasq.service"
+  notify: Restart systemd-resolved service
+
+- name: Restart systemd-resolved service
   ansible.builtin.systemd:
     state: restarted
     enabled: true
     daemon_reload: true
-    name: "dnsmasq.service"
+    name: "systemd-resolved.service"
