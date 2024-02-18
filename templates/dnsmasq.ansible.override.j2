@@ -1,0 +1,5 @@
+{{ ansible_managed | comment }}
+
+[Service]
+ExecStartPre=/usr/bin/sh -c 'systemctl is-active systemd-resolved.service > /dev/null && systemctl stop systemd-resolved.service'
+ExecStartPost=/usr/bin/sh -c 'systemctl is-active systemd-resolved.service > /dev/null || ( systemctl is-enabled systemd-resolved.service > /dev/null && systemctl start systemd-resolved.service )'
