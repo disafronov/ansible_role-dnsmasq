@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [3.1.1] - 2024-11-12
+
+### 🚜 Refactor
+
+- Change workflow matrix
+- Workflow update & minimal ansible version bump in tests
+
 ## [3.1.0] - 2024-09-03
 
 ### 🚀 Features
